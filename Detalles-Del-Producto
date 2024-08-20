@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="product-title">Product Page</title>
+
+    <!-- Preconexión a fuentes para mejorar la carga -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Preload de fuentes -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" as="style" onload="this.rel='stylesheet'">
+
+    <!-- CSS crítico -->
+    <style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+    h1, h2, p {
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-top: 20px;
+        line-height: 32px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: normal;
+        margin-top: 5px;
+        line-height: 22px;
+        color: black;
+    }
+
+    .sku-info {
+        font-size: 10px;
+        color: #dbd9d9;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .price-container {
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .price, .price-regular {
+        margin-top: 1px;
+        margin-bottom: 1px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .price {
+        font-size: 35px;
+        font-weight: bold;
+        color: #FF2156; 
+        position: relative;
+    }
+
+    .price-regular {
+        font-size: 23px;
+        text-decoration: line-through;
+        color: black;
+        margin-left: 10px;
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .currency {
+        font-size: 13px;
+        vertical-align: super;
+        margin-left: 5px;
+        position: relative;
+        top: -1px;
+    }
+
+    .stock-label, .envio-label, .tallas-label, .contenido-neto-label, .marca-label, .cantidad-label {
+        font-size: 13px;
+        font-weight: bold;
+        display: block;
+        margin: 15px 0 10px 0;
+    }
+
+    .stock-info, .delivery-info {
+        font-size: 16px;
+        padding: 1px 15px;
+        border-radius: 12px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .marca-producto-info {   
+        font-size: 16px;
+        border-radius: 0px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+
+    .stock-disponible {
+        background-color: rgba(75, 222, 89, 0.1);
+        color: #4bca59;
+        border: none;
+    }
+
+    .stock-pocas-unidades {
+        background-color: rgba(255, 180, 0, 0.1);
+        color: #ffb400;
+        border: none;
+    }
+
+    .stock-agotado {
+        background-color: rgba(255, 33, 86, 0.1);
+        color: #FF2156;
+        border: 1px solid #FF2156;
+    }
+
+    .add-to-cart {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color: #000;
+        color: #fff;
+        padding: 15px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        margin: 40px 0;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+
+    .add-to-cart:disabled {
+        background-color: black;
+        cursor: not-allowed;
+    }
+
+    .static {
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .add-to-cart:hover {
+        background-color: #FF2156;
+    }
+
+    .add-to-cart:hover .static {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    .add-to-cart:hover .dynamic {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .contenido-neto-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+
+    .contenido-neto-container,
+    .delivery-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 7px;
+    }
+
+    .contenido-neto-btn, .delivery-container .contenido-neto-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        background-color: #fbf8f8;
+        color: inherit;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        margin-right: 8px;
+        text-align: center;
+    }
+
+    .contenido-neto-btn.seleccionado, .delivery-container .contenido-neto-btn.seleccionado {
+        border-color: #FF2156;
+        color: #FF2156;
+        border-width: 2px;
+    }
+
+    .contenido-neto-btn:hover, .delivery-container .contenido-neto-btn:hover {
+        background-color: rgba(255, 33, 86, 0.1);
+    }
+
+    .delivery-gratis-btn {
+        border: 2px solid #4bca59;
+        color: #4bca59;
+    }
+
+    .delivery-gratis-btn:hover,
+    .delivery-gratis-btn.seleccionado {
+        background-color: #4bca59;
+        color: #fff;
+    }
+
+    #tallas-container {
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+
+    .cuadro {
+        width: 30px;
+        height: 30px;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        margin: 3px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .cuadro .borde-externo {
+        position: absolute;
+        border-radius: 4px;
+        border: 1px solid #FF2156;
+        background-color: #fae0ea;
+    }
+
+    .cuadro .contenido-interno {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 2px;
+        border: 1px solid #ccc;
+        color: #333333;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .cuadro.disponible .contenido-interno {
+        background-color: rgba(251, 248, 2248, 0.0);
+        font-weight: normal;
+    }
+
+    .cuadro.seleccionado .contenido-interno {
+        background-color: rgba(255, 196, 211, 0.9);
+    }
+
+    .cuadro.fuera-stock .linea-diagonal {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent calc(50% - 2px / 2), red calc(50% - 2px / 2), red calc(50% + 2px / 2), transparent calc(50% + 2px / 2));
+    }
+
+/* Estilos relevantes para el tooltip */
+        .cuadro-color {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin: 4px;
+            border: 2px solid transparent;
+            display: inline-block;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            position: relative;
+        }
+
+        .cuadro-color img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cuadro-color.seleccionado {
+            border-color: #FF2156;
+        }
+
+        .cuadro-color:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 110%; /* Justo encima del cuadro */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(128, 128, 128, 0.8);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            z-index: 10; /* Asegura que el tooltip esté por encima de otros elementos */
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(128, 128, 128, 0.8) transparent transparent transparent;
+        }
+
+    .cantidad-section {
+        display: block;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-top: 50px;
+        margin: 0px;
+        width: auto;
+    }
+
+    .counter-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fbf8f8;
+        border-radius: 8px;
+        border: none;
+        padding: 5px;
+        width: 100px;
+        height: 30px;
+        margin-top: 5px;
+    }
+
+    .counter-button {
+        background-color: transparent;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: 35px;
+        height: 35px;
+        transition: transform 0.3s;
+    }
+
+    .counter-button:hover {
+        transform: scale(1.1);
+    }
+
+    .counter-button svg {
+        width: 18px;
+        height: 18px;
+        fill: #888;
+    }
+
+    .counter-value {
+        font-size: 18px;
+        font-weight: regular;
+        text-align: center;
+        color: #000;
+    }
+
+    .divider {
+        width: 100%;
+        height: 1px;
+        background-color: #ddd;
+        margin: 20px 0;
+    }
+
+    /* Estilo para el título desplegable */
+    details {
+        width: 100%;
+        font-family: 'Poppins', sans-serif;
+        padding: 20px 0;
+        border-bottom: 1px solid #ccc;
+        list-style: none;
+        cursor: pointer;
+        position: relative;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    summary {
+        display: flex;
+        align-items: center;
+        outline: none;
+        list-style: none;
+        cursor: pointer;
+        position: relative;
+        background: transparent;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    summary h4 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: #000;
+        font-weight: normal;
+    }
+
+    summary span {
+        margin-left: auto;
+        transition: transform 0.3s ease;
+    }
+
+    summary svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 10px;
+        display: none;
+    }
+
+    /* Tachado unificado */
+    .price-regular {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        position: relative;
+        margin-left: 25px;
+    }
+
+    .price-regular::after {
+        content: '';
+        position: absolute;
+        height: 1.5px;
+        background-color: black;
+        width: 100%;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .envio-container {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+    }
+
+    .envio-label, 
+    .envio-subtitulo {
+        font-size: 13px;
+        line-height: 1.2;
+    }
+
+    .envio-subtitulo {
+        font-size: 11px;
+        color: #333;
+    }
+
+    </style>
+
+
+    <!-- Diferir carga de fuentes -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" media="print" onload="this.media='all'">
+</head>
+<body>
+    <div id="loader" style="text-align: center; padding: 20px;">Cargando...</div>
+
+    <div id="content" style="display: none; width: 100%;">
+        <h1 id="product-name">Nombre del Producto</h1>
+
+        <!-- Código del producto -->
+        <div id="sku-info" class="sku-info"></div>
+
+        <!-- Subtítulo del producto -->
+        <h2 id="product-subtitle">Subtítulo del Producto</h2>
+
+        <!-- Línea divisora -->
+        <div class="divider"></div>
+
+        <!-- Precio -->
+        <div class="price-container">
+            <span id="product-price" class="price"></span>
+            <span id="product-price-regular" class="price-regular"></span>
+        </div>
+
+        <!-- Línea divisora -->
+        <div class="divider"></div>
+
+        <!-- Stock del producto -->
+        <div style="display: flex; align-items: center; margin-bottom: -15px;">
+            <span class="stock-label" style="margin-right: 20px; margin-top: 2px;">Stock:</span>
+            <div id="stock-info" class="stock-info" style="margin-top: 2px;"></div>
+        </div>
+
+        <!-- Contenedor para Tallas (solo visible si hay datos) -->
+        <div id="tallas-section" style="display: none;">
+            <span class="tallas-label">Tallas:</span>
+            <div id="tallas-container"></div>
+        </div>
+
+ <!-- Contenedor para Colores (solo visible si hay datos) -->
+<div id="colores-section" style="display: none;">
+    <span class="stock-label">Colores:</span>
+    <div id="colores-container"></div>
+</div>
+
+        <!-- Contenedor para tipo de Presentacion de producto (solo visible si hay datos) -->
+        <div id="contenido-neto-section" class="contenido-neto-section" style="display: none;">
+            <span class="contenido-neto-label">Presentación:</span>
+            <div id="contenido-neto-container" class="contenido-neto-container"></div>
+        </div>
+
+        <!-- Envío Regional -->
+        <div class="envio-container">
+            <span class="envio-label">Método de entrega:</span>
+            <span class="envio-subtitulo">Local en Santa Cruz</span>
+        </div>
+        <div id="delivery-info" class="delivery-container"></div>
+
+        <!-- Marca del producto -->
+        <div>
+            <span class="marca-label">Marca:</span>
+            <div id="marca-producto-info" class="marca-producto-info"></div>
+        </div>
+
+        <!-- Contador de cantidades con título -->
+        <div class="cantidad-section">
+            <span class="cantidad-label">Cantidad:</span>
+            <div class="counter-container">
+                <button class="counter-button" id="decrease">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232l144 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-144 0c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/>
+                    </svg>
+                </button>
+                <span class="counter-value" id="counter">1</span>
+                <button class="counter-button" id="increase">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Botón de compra -->
+        <button id="add-to-cart-button" class="add-to-cart">
+            <div class="static">PROCESAR COMPRA</div>
+            <div class="dynamic" style="opacity: 50; position: absolute;">PROCESAR COMPRA</div>
+        </button>
+
+        <!-- Descripción del producto con título desplegable -->
+        <details>
+            <summary>
+                <h4>Descripción del producto</h4>
+                <span>
+                    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" width="24px" height="24px" fill="none">
+                        <path stroke="currentColor" stroke-width="1.5" d="M18.966 8.476L12 15.443 5.033 8.476"></path>
+                    </svg>
+                </span>
+            </summary>
+            <div style="margin-top: 10px;">
+                <p id="product-description">Descripción del producto</p>
+            </div>
+        </details>
+
+    </div>
+
+    <script defer>
+    let precioBase = 0;
+    let precioOferta = false;
+    let monedaActual = 'BOB'; // Variable global para la moneda
+
+    // SVG del ícono con color para la oferta
+    const iconSVGOferta = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="24px" height="24px" style="margin-right: 9px; vertical-align: middle; fill: #ff2156;"><path d="M0 112.5L0 422.3c0 18 10.1 35 27 41.3c87 32.5 174 10.3 261-11.9c79.8-20.3 159.6-40.7 239.3-18.9c23 6.3 48.7-9.5 48.7-33.4l0-309.9c0-18-10.1-35-27-41.3C462 15.9 375 38.1 288 60.3C208.2 80.6 128.4 100.9 48.7 79.1C25.6 72.8 0 88.6 0 112.5zM288 352c-44.2 0-80-43-80-96s35.8-96 80-96s80 43 80 96s-35.8 96-80 96zM64 352c35.3 0 64 28.7 64 64l-64 0 0-64zm64-208c0 35.3-28.7 64-64 64l0-64 64 0zM512 304l0 64-64 0c0-35.3 28.7-64 64-64zM448 96l64 0 0 64c-35.3 0-64-28.7-64-64z"/></svg>';
+
+    // SVG del ícono con color para el precio regular
+    const iconSVGRegular = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="24px" height="24px" style="margin-right: 9px; vertical-align: middle; fill: black;"><path d="M0 112.5L0 422.3c0 18 10.1 35 27 41.3c87 32.5 174 10.3 261-11.9c79.8-20.3 159.6-40.7 239.3-18.9c23 6.3 48.7-9.5 48.7-33.4l0-309.9c0-18-10.1-35-27-41.3C462 15.9 375 38.1 288 60.3C208.2 80.6 128.4 100.9 48.7 79.1C25.6 72.8 0 88.6 0 112.5zM288 352c-44.2 0-80-43-80-96s35.8-96 80-96s80 43 80 96s-35.8 96-80 96zM64 352c35.3 0 64 28.7 64 64l-64 0 0-64zm64-208c0 35.3-28.7 64-64 64l0-64 64 0zM512 304l0 64-64 0c0-35.3 28.7-64 64-64zM448 96l64 0 0 64c-35.3 0-64-28.7-64-64z"/></svg>';
+
+    // Función para formatear el número con separador de miles en estilo latinoamericano
+    function formatearNumero(numero) {
+        return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    async function obtenerDetallesProducto(sku) {
+        try {
+            const response = await fetch(`https://script.google.com/macros/s/AKfycby-J_yVx4ISJlsteyUegMub2_UTe1S-MUYyGuYyQgIFKGvE1MuZ76AozEP7qMjB2PkZDA/exec?producto=${encodeURIComponent(sku)}`);
+            const producto = await response.json();
+
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("content").style.display = "block";
+
+            document.getElementById("product-name").innerText = producto.nombre;
+            document.getElementById("product-title").innerText = producto.nombre;
+            document.getElementById("product-subtitle").innerText = producto.subtitulo;
+
+            const precioElement = document.getElementById("product-price");
+            const precioRegularElement = document.getElementById("product-price-regular");
+
+            // Eliminar cualquier moneda existente de los valores
+            const costoOferta = producto.costoOferta ? producto.costoOferta.replace(/[^\d.-]/g, '') : null;
+            const costoRegular = producto.costoRegular ? producto.costoRegular.replace(/[^\d.-]/g, '') : null;
+
+            if (costoOferta) {
+                // Si hay oferta, mostrar el ícono con color rojo en el precio de oferta
+                precioBase = parseFloat(costoOferta);
+                precioOferta = true;
+                precioElement.innerHTML = `${iconSVGOferta}${formatearNumero(Math.round(precioBase))}<span class="currency">${monedaActual}</span>`;
+                precioElement.style.color = '#ff2156';
+                precioRegularElement.innerHTML = `${formatearNumero(costoRegular)}<span class="currency">${monedaActual}</span>`;
+                precioRegularElement.style.display = 'inline-flex';
+            } else {
+                // Si no hay oferta, mostrar el ícono en el precio regular con color negro
+                precioBase = parseFloat(costoRegular);
+                precioOferta = false;
+                precioElement.innerHTML = `${iconSVGRegular}${formatearNumero(Math.round(precioBase))}<span class="currency">${monedaActual}</span>`;
+                precioElement.style.color = '#000';
+                precioRegularElement.style.display = 'none';
+            }
+
+            const stockInfoDiv = document.getElementById("stock-info");
+            let compraDisponible = false;
+            if (producto.stock === "Disponible") {
+                stockInfoDiv.className = "stock-info stock-disponible";
+                compraDisponible = true;
+            } else if (producto.stock === "Pocas unidades") {
+                stockInfoDiv.className = "stock-info stock-pocas-unidades";
+                compraDisponible = true;
+            } else if (producto.stock === "Agotado") {
+                stockInfoDiv.className = "stock-info stock-agotado";
+            } else {
+                stockInfoDiv.className = "stock-info";
+                stockInfoDiv.style.color = "black";
+            }
+            stockInfoDiv.innerText = producto.stock;
+
+            if (producto.delivery) {
+                generarDelivery(producto.delivery);
+            } else {
+                document.getElementById("delivery-info").style.display = 'none';
+            }
+
+            if (producto.marcaProducto) {
+                document.getElementById("marca-producto-info").innerText = producto.marcaProducto;
+            } else {
+                document.getElementById("marca-producto-info").parentElement.style.display = 'none';
+            }
+
+            document.getElementById("product-description").innerText = producto.descripcion;
+            document.getElementById("sku-info").innerText = `Cód: ${sku}`;
+
+            const addToCartButton = document.getElementById("add-to-cart-button");
+            addToCartButton.disabled = !compraDisponible;
+
+            if (producto.tallas && producto.tallasDisponibles) {
+                generarTallas(producto.tallas, producto.tallasDisponibles);
+            }
+
+            if (producto.contenidoNeto) {
+                generarContenidoNeto(producto.contenidoNeto, producto.costoRegular, producto.costoOferta);
+            }
+
+            if (producto.colores && producto.colores.length > 0) {
+                generarColores(producto.colores);
+            }
+
+            // Cambiar moneda a la moneda seleccionada después de cargar los detalles del producto
+            cambiarMoneda(monedaActual);
+
+        } catch (error) {
+            console.error("Error al obtener los detalles del producto:", error);
+            document.getElementById("product-price").innerText = "Error al obtener el precio";
+            document.getElementById("product-price-regular").innerText = "Error al obtener el precio";
+        }
+    }
+
+    function generarTallas(tallas, tallasDisponibles) {
+        const tallasContainer = document.getElementById("tallas-container");
+        tallasContainer.innerHTML = '';
+        document.getElementById('tallas-section').style.display = 'block';
+
+        const listaTallas = tallas.split(/[,;]\s*/);
+        const tallasEnStock = tallasDisponibles.split(/[,;]\s*/);
+
+        listaTallas.forEach(talla => {
+            const estaDisponible = tallasEnStock.includes(talla.trim());
+            const cuadro = document.createElement('div');
+            cuadro.classList.add('cuadro', estaDisponible ? 'disponible' : 'fuera-stock');
+            if (estaDisponible) {
+                cuadro.onclick = () => seleccionarTalla(cuadro);
+            }
+            cuadro.innerHTML = `
+                <div class="borde-externo"></div>
+                <div class="contenido-interno">
+                    ${!estaDisponible ? '<div class="linea-diagonal"></div>' : ''}
+                    <div class="texto">${talla}</div>
+                </div>
+            `;
+            tallasContainer.appendChild(cuadro);
+        });
+    }
+
+    function generarContenidoNeto(contenidoNeto, preciosRegularStr, preciosOfertaStr) {
+        const contenidoNetoContainer = document.getElementById("contenido-neto-container");
+        contenidoNetoContainer.innerHTML = '';
+        document.getElementById('contenido-neto-section').style.display = 'block';
+
+        const presentaciones = contenidoNeto.split(/[,;]\s*/);
+        const preciosRegular = preciosRegularStr.split(/[,;]\s*/);
+        const preciosOferta = preciosOfertaStr.split(/[,;]\s*/);
+
+        presentaciones.forEach((presentacion, index) => {
+            const boton = document.createElement('div');
+            boton.classList.add('contenido-neto-btn');
+            boton.textContent = presentacion;
+            boton.onclick = () => {
+                mostrarPrecio(index, preciosRegular, preciosOferta);
+                seleccionarPresentacion(boton);
+                resetearContador();
+            };
+            contenidoNetoContainer.appendChild(boton);
+        });
+
+        mostrarPrecio(0, preciosRegular, preciosOferta);
+        seleccionarPresentacion(contenidoNetoContainer.children[0]);
+    }
+
+    function generarColores(colores) {
+        const coloresContainer = document.getElementById("colores-container");
+        coloresContainer.innerHTML = '';
+
+        if (colores && colores.length > 0) {
+            document.getElementById('colores-section').style.display = 'block';
+
+            colores.forEach(item => {
+                let [color, imagenUrl] = item.includes('-') ? item.split('-') : ['', item];
+                color = color.trim();
+                imagenUrl = imagenUrl.trim();
+
+                if (!imagenUrl) {
+                    console.error("URL de imagen faltante para el color:", color);
+                    return; // Saltar este color si falta la URL
+                }
+
+                const cuadro = document.createElement('div');
+                cuadro.classList.add('cuadro-color');
+                cuadro.onclick = () => seleccionarColor(cuadro);
+
+                cuadro.innerHTML = `
+                    <img src="${imagenUrl}" alt="Color">
+                    ${color ? `<div class="tooltip">${color}</div>` : ''}
+                `;
+
+                coloresContainer.appendChild(cuadro);
+            });
+        } else {
+            console.warn("No se proporcionaron colores o el formato es incorrecto.");
+            document.getElementById('colores-section').style.display = 'none';
+        }
+    }
+
+    function generarDelivery(delivery) {
+        const deliveryContainer = document.getElementById("delivery-info");
+        deliveryContainer.innerHTML = '';
+
+        const opcionesDelivery = delivery.split(/[,;]\s*/);
+
+        opcionesDelivery.forEach((opcion, index) => {
+            const boton = document.createElement('div');
+            boton.classList.add('contenido-neto-btn');
+
+            if (opcion.toLowerCase().includes("gratis")) {
+                boton.classList.add('delivery-gratis-btn');
+            }
+
+            boton.textContent = opcion;
+            boton.onclick = () => {
+                aplicarDelivery(opcion);
+                seleccionarDelivery(boton);
+            };
+
+            deliveryContainer.appendChild(boton);
+        });
+
+        setTimeout(() => {
+            seleccionarDelivery(deliveryContainer.children[0]);
+            aplicarDelivery(opcionesDelivery[0]);
+        }, 0);
+    }
+
+    function aplicarDelivery(opcion) {
+        const costoDelivery = parseFloat(opcion.replace(/[^\d.-]/g, '')) || 0;
+        actualizarPrecio(costoDelivery);
+    }
+
+    function seleccionarDelivery(boton) {
+        document.querySelectorAll('.delivery-container .contenido-neto-btn.seleccionado').forEach(btn => {
+            btn.classList.remove('seleccionado');
+        });
+        boton.classList.add('seleccionado');
+    }
+
+    function seleccionarColor(elemento) {
+        document.querySelectorAll('.cuadro-color.seleccionado').forEach(cuadro => {
+            cuadro.classList.remove('seleccionado');
+        });
+        elemento.classList.add('seleccionado');
+    }
+
+    function mostrarPrecio(index, preciosRegular, preciosOferta) {
+        const oferta = preciosOferta[index];
+        const regular = preciosRegular[index];
+        const precioElement = document.getElementById("product-price");
+        const precioRegularElement = document.getElementById("product-price-regular");
+
+        // Eliminar cualquier moneda existente de los valores
+        const ofertaSinMoneda = oferta ? oferta.replace(/[^\d.-]/g, '') : null;
+        const regularSinMoneda = regular ? regular.replace(/[^\d.-]/g, '') : null;
+
+        if (ofertaSinMoneda) {
+            precioBase = parseFloat(ofertaSinMoneda);
+            // Mostrar ícono solo en el precio de oferta con color rojo
+            precioElement.innerHTML = `${iconSVGOferta}${formatearNumero(Math.round(precioBase))}<span class="currency">${monedaActual}</span>`;
+            precioRegularElement.innerHTML = `${formatearNumero(regularSinMoneda)}<span class="currency">${monedaActual}</span>`;
+            precioRegularElement.style.display = 'inline-flex';
+            precioOferta = true;
+        } else {
+            precioBase = parseFloat(regularSinMoneda);
+            // Mostrar ícono solo en el precio regular con color negro
+            precioElement.innerHTML = `${iconSVGRegular}${formatearNumero(Math.round(precioBase))}<span class="currency">${monedaActual}</span>`;
+            precioRegularElement.style.display = 'none';
+            precioOferta = false;
+        }
+
+        actualizarPrecio();
+    }
+
+    function seleccionarPresentacion(boton) {
+        document.querySelectorAll('.contenido-neto-btn.seleccionado').forEach(btn => {
+            btn.classList.remove('seleccionado');
+        });
+        boton.classList.add('seleccionado');
+    }
+
+    function seleccionarTalla(elemento) {
+        document.querySelectorAll('.cuadro.seleccionado').forEach(cuadro => {
+            cuadro.classList.remove('seleccionado');
+        });
+        elemento.classList.add('seleccionado');
+    }
+
+    function actualizarPrecio(costoAdicional = 0) {
+        const contador = document.getElementById('counter');
+        const cantidad = parseInt(contador.innerText);
+        const precioElement = document.getElementById("product-price");
+        const precioTotal = Math.round((precioBase + costoAdicional) * cantidad);
+        precioElement.innerHTML = `${iconSVGOferta}${formatearNumero(precioTotal)}<span class="currency">${monedaActual}</span>`;
+    }
+
+    function resetearContador() {
+        const contador = document.getElementById('counter');
+        contador.innerText = '1';
+        actualizarPrecio();
+    }
+
+    document.getElementById('decrease').addEventListener('click', () => {
+        const contador = document.getElementById('counter');
+        let cantidad = parseInt(contador.innerText);
+        if (cantidad > 1) {
+            cantidad--;
+            contador.innerText = cantidad;
+            actualizarPrecio();
+        }
+    });
+
+    document.getElementById('increase').addEventListener('click', () => {
+        const contador = document.getElementById('counter');
+        let cantidad = parseInt(contador.innerText);
+        cantidad++;
+        contador.innerText = cantidad;
+        actualizarPrecio();
+    });
+
+    // Script para el icono desplegable
+    document.querySelectorAll('details').forEach(details => {
+        details.addEventListener('toggle', event => {
+            const summaryIcon = details.querySelector('summary span');
+            if (details.open) {
+                summaryIcon.style.transform = 'rotate(180deg)';
+            } else {
+                summaryIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+
+    // etiqueta de colores texto
+function generarColores(colores) {
+            const coloresContainer = document.getElementById("colores-container");
+            coloresContainer.innerHTML = '';
+
+            if (colores && colores.length > 0) {
+                document.getElementById('colores-section').style.display = 'block';
+
+                colores.forEach(item => {
+                    let [color, imagenUrl] = item.includes('-') ? item.split('-') : ['', item];
+                    color = color.trim();
+                    imagenUrl = imagenUrl.trim();
+
+                    if (!imagenUrl) {
+                        console.error("URL de imagen faltante para el color:", color);
+                        return; // Saltar este color si falta la URL
+                    }
+
+                    console.log("Generando color:", color, "URL:", imagenUrl); // Debugging
+
+                    const cuadro = document.createElement('div');
+                    cuadro.classList.add('cuadro-color');
+                    cuadro.onclick = () => seleccionarColor(cuadro);
+
+                    cuadro.innerHTML = `
+                        <img src="${imagenUrl}" alt="${color}">
+                        ${color ? `<div class="tooltip">${color}</div>` : ''}
+                    `;
+
+                    coloresContainer.appendChild(cuadro);
+                });
+            } else {
+                console.warn("No se proporcionaron colores o el formato es incorrecto.");
+                document.getElementById('colores-section').style.display = 'none';
+            }
+        }
+
+        function seleccionarColor(elemento) {
+            document.querySelectorAll('.cuadro-color.seleccionado').forEach(cuadro => {
+                cuadro.classList.remove('seleccionado');
+            });
+            elemento.classList.add('seleccionado');
+        }
+
+        // Ejemplo de uso
+        const colores = [
+            "rojo-https://i.imgur.com/Aobk5PA.jpeg",
+            "verde-https://i.imgur.com/upLvKqN.jpg",
+            "https://i.imgur.com/Aobk5PA.jpeg" // Sin color especificado
+        ];
+
+        generarColores(colores);
+
+    // Función para cambiar la moneda en todos los precios desde un solo punto
+    function cambiarMoneda(nuevaMoneda) {
+        monedaActual = nuevaMoneda; // Actualizar la moneda global
+        document.querySelectorAll('.currency').forEach(function(element) {
+            element.innerText = nuevaMoneda;
+        });
+        actualizarPrecio(); // Actualizar los precios para reflejar la nueva moneda
+    }
+
+    // Ejemplo de uso: cambiar tu moneda oficial a: USD, BOB, EUR, ETC
+    cambiarMoneda('BOB');
+
+    obtenerDetallesProducto("SKU002");
+
+</script>
+
+</body>
+</html>
